@@ -40,6 +40,15 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
     setOpenHelp(o => ({ ...o, [name]: !o[name] }));
   };
 
+  const handleQpsToggle = (checked: boolean) => {
+    setUseDirectQps(checked);
+    if (!checked) {
+      // Clear directQps when toggling off to ensure fallback to detailed parameters
+      const { directQps, ...otherParams } = input.parameters;
+      onChange({ ...input, parameters: otherParams });
+    }
+  };
+
   const setParam = (key: string, value: any) => {
     onChange({ ...input, parameters: { ...input.parameters, [key]: value } });
   };
@@ -94,7 +103,7 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
             <input 
               type="checkbox" 
               checked={useDirectQps} 
-              onChange={e => setUseDirectQps(e.target.checked)}
+              onChange={e => handleQpsToggle(e.target.checked)}
             />
             <span>Use direct QPS input instead of monthly breakdown</span>
           </label>
@@ -117,7 +126,7 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
             <input 
               type="checkbox" 
               checked={useDirectQps} 
-              onChange={e => setUseDirectQps(e.target.checked)}
+              onChange={e => handleQpsToggle(e.target.checked)}
             />
             <span>Use direct QPS input instead of baseline + fork parameters</span>
           </label>
@@ -140,7 +149,7 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
             <input 
               type="checkbox" 
               checked={useDirectQps} 
-              onChange={e => setUseDirectQps(e.target.checked)}
+              onChange={e => handleQpsToggle(e.target.checked)}
             />
             <span>Use direct QPS input instead of baseline + delta calculation</span>
           </label>
@@ -163,7 +172,7 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
             <input 
               type="checkbox" 
               checked={useDirectQps} 
-              onChange={e => setUseDirectQps(e.target.checked)}
+              onChange={e => handleQpsToggle(e.target.checked)}
             />
             <span>Use direct QPS input instead of growth parameter calculation</span>
           </label>
