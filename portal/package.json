@@ -8,11 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx",
-    "build:share": "npm run build && npm run package:zip",
-    "package:zip": "powershell -Command \"Compress-Archive -Path dist/* -DestinationPath ../resourcecalc-portal-v0.1.0.zip -Force\"",
-    "serve:local": "npx serve dist -p 3000",
-    "deploy:netlify": "npm run build && npx netlify deploy --prod --dir=dist",
-    "deploy:vercel": "npm run build && npx vercel --prod"
+    "serve:local": "npx serve dist -p 3000"
   },
   "dependencies": {
     "react": "18.3.1",
