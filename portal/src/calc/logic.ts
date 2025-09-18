@@ -81,29 +81,41 @@ export function calculateScenario(input: ScenarioInput): CalculationResult {
       break;
     }
     case 'shadow_ab': {
-      const live = ensurePositive('liveBaselineQps', p.liveBaselineQps, true);
-      const forkPct = ensurePositive('forkPercent', p.forkPercent, true);
-      const forkCount = ensurePositive('forkCount', p.forkCount);
-      effectiveQps = live * (forkPct / 100) * forkCount;
+      if (p.directQps !== undefined) {
+        effectiveQps = ensurePositive('directQps', p.directQps);
+      } else {
+        const live = ensurePositive('liveBaselineQps', p.liveBaselineQps, true);
+        const forkPct = ensurePositive('forkPercent', p.forkPercent, true);
+        const forkCount = ensurePositive('forkCount', p.forkCount);
+        effectiveQps = live * (forkPct / 100) * forkCount;
+      }
       break;
     }
     case 'online_ab_delta': {
-      const live = ensurePositive('liveBaselineQps', p.liveBaselineQps, true);
-      const share = ensurePositive('treatmentShare', p.treatmentShare, true);
-      const delta = ensurePositive('deltaFactor', p.deltaFactor, true);
-      if (share > 1 || delta > 1) throw new Error('Fractions must be <= 1');
-      effectiveQps = live * share * delta;
+      if (p.directQps !== undefined) {
+        effectiveQps = ensurePositive('directQps', p.directQps);
+      } else {
+        const live = ensurePositive('liveBaselineQps', p.liveBaselineQps, true);
+        const share = ensurePositive('treatmentShare', p.treatmentShare, true);
+        const delta = ensurePositive('deltaFactor', p.deltaFactor, true);
+        if (share > 1 || delta > 1) throw new Error('Fractions must be <= 1');
+        effectiveQps = live * share * delta;
+      }
       break;
     }
     case 'inorganic_growth': {
-      const deltaMau = ensurePositive('deltaMau', p.deltaMau, true);
-      const ratio = ensurePositive('dauMauRatio', p.dauMauRatio, true);
-      const qpd = ensurePositive('qpd', p.qpd, true);
-      const realization = ensurePositive('realizationFactor', p.realizationFactor, true);
-      const pcf = ensurePositive('pcf', p.pcf);
-      if ([ratio, realization].some(v => v > 1)) throw new Error('Ratios must be <= 1');
-      const deltaDau = deltaMau * ratio;
-      effectiveQps = ((deltaDau * qpd * realization) / 86400) * pcf;
+      if (p.directQps !== undefined) {
+        effectiveQps = ensurePositive('directQps', p.directQps);
+      } else {
+        const deltaMau = ensurePositive('deltaMau', p.deltaMau, true);
+        const ratio = ensurePositive('dauMauRatio', p.dauMauRatio, true);
+        const qpd = ensurePositive('qpd', p.qpd, true);
+        const realization = ensurePositive('realizationFactor', p.realizationFactor, true);
+        const pcf = ensurePositive('pcf', p.pcf);
+        if ([ratio, realization].some(v => v > 1)) throw new Error('Ratios must be <= 1');
+        const deltaDau = deltaMau * ratio;
+        effectiveQps = ((deltaDau * qpd * realization) / 86400) * pcf;
+      }
       break;
     }
     default:

@@ -112,21 +112,75 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
         )}
       </>}
       {scenarioType === 'shadow_ab' && <>
-        {numberField('Live Baseline QPS', 'liveBaselineQps', p.liveBaselineQps ?? 2000)}
-        {numberField('Fork %', 'forkPercent', p.forkPercent ?? 20)}
-        {numberField('Fork Count', 'forkCount', p.forkCount ?? 2, '1')}
+        <div className="full-row">
+          <label className="input-mode-toggle">
+            <input 
+              type="checkbox" 
+              checked={useDirectQps} 
+              onChange={e => setUseDirectQps(e.target.checked)}
+            />
+            <span>Use direct QPS input instead of baseline + fork parameters</span>
+          </label>
+        </div>
+        {useDirectQps ? (
+          <>
+            {numberField('Direct QPS', 'directQps', p.directQps ?? 400)}
+          </>
+        ) : (
+          <>
+            {numberField('Live Baseline QPS', 'liveBaselineQps', p.liveBaselineQps ?? 2000)}
+            {numberField('Fork %', 'forkPercent', p.forkPercent ?? 20)}
+            {numberField('Fork Count', 'forkCount', p.forkCount ?? 2, '1')}
+          </>
+        )}
       </>}
       {scenarioType === 'online_ab_delta' && <>
-        {numberField('Live Baseline QPS', 'liveBaselineQps', p.liveBaselineQps ?? 3000)}
-        {numberField('Treatment Share (0-1)', 'treatmentShare', p.treatmentShare ?? 0.5)}
-        {numberField('Delta Factor (0-1)', 'deltaFactor', p.deltaFactor ?? 0.1)}
+        <div className="full-row">
+          <label className="input-mode-toggle">
+            <input 
+              type="checkbox" 
+              checked={useDirectQps} 
+              onChange={e => setUseDirectQps(e.target.checked)}
+            />
+            <span>Use direct QPS input instead of baseline + delta calculation</span>
+          </label>
+        </div>
+        {useDirectQps ? (
+          <>
+            {numberField('Direct QPS', 'directQps', p.directQps ?? 150)}
+          </>
+        ) : (
+          <>
+            {numberField('Live Baseline QPS', 'liveBaselineQps', p.liveBaselineQps ?? 3000)}
+            {numberField('Treatment Share (0-1)', 'treatmentShare', p.treatmentShare ?? 0.5)}
+            {numberField('Delta Factor (0-1)', 'deltaFactor', p.deltaFactor ?? 0.1)}
+          </>
+        )}
       </>}
       {scenarioType === 'inorganic_growth' && <>
-        {numberField('ΔMAU', 'deltaMau', p.deltaMau ?? 10000)}
-        {numberField('DAU/MAU Ratio (0-1)', 'dauMauRatio', p.dauMauRatio ?? 0.35)}
-        {numberField('QPD', 'qpd', p.qpd ?? 2.4)}
-        {numberField('Realization Factor ρ (0-1)', 'realizationFactor', p.realizationFactor ?? 0.85)}
-        {numberField('PCF', 'pcf', p.pcf ?? 6.0)}
+        <div className="full-row">
+          <label className="input-mode-toggle">
+            <input 
+              type="checkbox" 
+              checked={useDirectQps} 
+              onChange={e => setUseDirectQps(e.target.checked)}
+            />
+            <span>Use direct QPS input instead of growth parameter calculation</span>
+          </label>
+        </div>
+        {useDirectQps ? (
+          <>
+            {numberField('Direct QPS', 'directQps', p.directQps ?? 50)}
+          </>
+        ) : (
+          <>
+            {numberField('ΔMAU', 'deltaMau', p.deltaMau ?? 10000)}
+            {numberField('DAU/MAU Ratio (0-1)', 'dauMauRatio', p.dauMauRatio ?? 0.35)}
+            {numberField('QPD', 'qpd', p.qpd ?? 2.4)}
+            {numberField('Realization Factor ρ (0-1)', 'realizationFactor', p.realizationFactor ?? 0.85)}
+            {numberField('PCF', 'pcf', p.pcf ?? 6.0)}
+          </>
+        )}
       </>}
 
       <details className="advanced full-row" aria-label="Advanced coefficients">
