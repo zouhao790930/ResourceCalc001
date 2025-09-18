@@ -20,6 +20,7 @@ export interface ScenarioParameters {
   queriesPerMonth?: number;
   workdaysPerMonth?: number;
   activeHoursPerDay?: number;
+  directQps?: number;  // Alternative to monthly breakdown
   // Shadow / Online
   liveBaselineQps?: number;
   forkPercent?: number;
@@ -69,10 +70,14 @@ export function calculateScenario(input: ScenarioInput): CalculationResult {
   let effectiveQps: number;
   switch (scenarioType) {
     case 'offline_ab': {
-      const qpm = ensurePositive('queriesPerMonth', p.queriesPerMonth);
-      const wd = ensurePositive('workdaysPerMonth', p.workdaysPerMonth);
-      const hours = ensurePositive('activeHoursPerDay', p.activeHoursPerDay);
-      effectiveQps = qpm / (wd * hours * 3600);
+      if (p.directQps !== undefined) {
+        effectiveQps = ensurePositive('directQps', p.directQps);
+      } else {
+        const qpm = ensurePositive('queriesPerMonth', p.queriesPerMonth);
+        const wd = ensurePositive('workdaysPerMonth', p.workdaysPerMonth);
+        const hours = ensurePositive('activeHoursPerDay', p.activeHoursPerDay);
+        effectiveQps = qpm / (wd * hours * 3600);
+      }
       break;
     }
     case 'shadow_ab': {

@@ -11,6 +11,7 @@ const HELP_TEXT: Record<string, string> = {
   queriesPerMonth: 'Total queries executed for offline evaluation in one month (QPM).',
   workdaysPerMonth: 'Number of workdays used to distribute monthly offline queries.',
   activeHoursPerDay: 'Active hours per workday generating offline queries.',
+  directQps: 'Direct queries per second input (alternative to monthly breakdown).',
   liveBaselineQps: 'Current live baseline queries per second before experimental load.',
   forkPercent: 'Percentage of live traffic duplicated for the shadow run.',
   forkCount: 'Number of parallel fork copies of the sampled traffic.',
@@ -33,6 +34,7 @@ const HELP_TEXT: Record<string, string> = {
 export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange }) => {
   const p = input.parameters;
   const [openHelp, setOpenHelp] = useState<Record<string, boolean>>({});
+  const [useDirectQps, setUseDirectQps] = useState(false);
 
   const toggleHelp = (name: string) => {
     setOpenHelp(o => ({ ...o, [name]: !o[name] }));
@@ -87,9 +89,27 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
   return (
     <form className="grid-form" onSubmit={e => e.preventDefault()}>
       {scenarioType === 'offline_ab' && <>
-        {numberField('Queries / Month', 'queriesPerMonth', p.queriesPerMonth ?? 1000)}
-        {numberField('Workdays / Month', 'workdaysPerMonth', p.workdaysPerMonth ?? 18)}
-        {numberField('Active Hours / Day', 'activeHoursPerDay', p.activeHoursPerDay ?? 5)}
+        <div className="full-row">
+          <label className="input-mode-toggle">
+            <input 
+              type="checkbox" 
+              checked={useDirectQps} 
+              onChange={e => setUseDirectQps(e.target.checked)}
+            />
+            <span>Use direct QPS input instead of monthly breakdown</span>
+          </label>
+        </div>
+        {useDirectQps ? (
+          <>
+            {numberField('Direct QPS', 'directQps', p.directQps ?? 100)}
+          </>
+        ) : (
+          <>
+            {numberField('Queries / Month', 'queriesPerMonth', p.queriesPerMonth ?? 1000)}
+            {numberField('Workdays / Month', 'workdaysPerMonth', p.workdaysPerMonth ?? 18)}
+            {numberField('Active Hours / Day', 'activeHoursPerDay', p.activeHoursPerDay ?? 5)}
+          </>
+        )}
       </>}
       {scenarioType === 'shadow_ab' && <>
         {numberField('Live Baseline QPS', 'liveBaselineQps', p.liveBaselineQps ?? 2000)}
