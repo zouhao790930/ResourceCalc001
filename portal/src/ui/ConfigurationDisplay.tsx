@@ -14,7 +14,7 @@ export const ConfigurationDisplay: React.FC = () => {
           className="config-toggle-btn"
           title="Show loaded configuration details"
         >
-          📊 Config: {config.source} (v{config.version})
+          📊 Configuration (v{config.version})
         </button>
       </div>
     );
@@ -34,7 +34,6 @@ export const ConfigurationDisplay: React.FC = () => {
       
       <div className="config-content">
         <div className="config-meta">
-          <p><strong>Source:</strong> {config.source}</p>
           <p><strong>Version:</strong> {config.version}</p>
           <p><strong>Last Updated:</strong> {config.lastUpdated}</p>
         </div>

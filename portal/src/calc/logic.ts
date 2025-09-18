@@ -150,7 +150,7 @@ export function getConfiguredCoefficients(): { fanout: FanoutCoefficients; cpuPe
     const fanout = configLoader.getFanoutCoefficients();
     const cpuPerRps = configLoader.getCpuPerRpsCoefficients();
     
-    console.log('Using configured coefficients from', configLoader.getConfig().source);
+    console.log('Using configured coefficients v' + configLoader.getConfig().version);
     console.log('CPU per RPS:', cpuPerRps);
     console.log('Fanout ratios:', fanout);
     

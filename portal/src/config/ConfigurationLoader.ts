@@ -3,7 +3,6 @@ import performanceConfig from './performance-coefficients.json';
 export interface PerformanceConfig {
   version: string;
   lastUpdated: string;
-  source: string;
   cpuCoefficients: {
     lssCpuPerRequest: { value: number; unit: string; description: string };
     storeCpuPerRequest: { value: number; unit: string; description: string };
@@ -35,7 +34,7 @@ export class ConfigurationLoader {
   
   private constructor() {
     this.config = performanceConfig as PerformanceConfig;
-    console.log(`Loaded performance configuration v${this.config.version} from ${this.config.source}`);
+    console.log(`Loaded performance configuration v${this.config.version} (updated ${this.config.lastUpdated})`);
   }
   
   public static getInstance(): ConfigurationLoader {

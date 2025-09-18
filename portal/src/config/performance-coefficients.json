@@ -1,7 +1,6 @@
 {
   "version": "1.0.0",
   "lastUpdated": "2025-09-18",
-  "source": "BizChat Query CPU Monitoring Dashboard",
   "cpuCoefficients": {
     "lssCpuPerRequest": {
       "value": 0.04612,
