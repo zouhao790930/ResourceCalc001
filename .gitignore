@@ -1,18 +1,11 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+# Node.js
+node_modules/
 
-# Distribution / packaging
-.build/
-build/
+# Build artifacts
 dist/
-.eggs/
-*.egg-info/
+build/
 
-# Virtual environments
-.venv/
-venv/
+# Environment files
 .env
 .env.*
 
@@ -21,15 +14,10 @@ venv/
 .idea/
 *.swp
 
-# Unit test / coverage
-.coverage
-htmlcov/
-.pytest_cache/
-
-# Misc
+# OS files
 .DS_Store
 Thumbs.db
 
-# Frontend build artifacts
+# Frontend specific
 portal/node_modules/
 portal/dist/

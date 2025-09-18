@@ -1,11 +1,15 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to ResourceCalc Portal will be documented in this file.
 
 ## [0.1.0] - 2025-09-15
 
 ### Added
 
-- Initial project scaffolding with capacity, cost, and timeline calculators.
-- CLI entry point `resourcecalc`.
-- Basic tests.
+- Interactive React portal for CPU/RPS estimation scenarios
+- Support for Offline A/B, Shadow A/B, Online A/B Delta, and Inorganic Growth scenarios
+- Professional UI with accessibility features and keyboard navigation
+- Real-time calculation with parameter validation
+- Visual results with charts and data tables
+- Shareable package distribution
+- GitHub Pages deployment workflow

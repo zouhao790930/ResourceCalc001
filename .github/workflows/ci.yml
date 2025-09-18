@@ -7,27 +7,10 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build-test:
+  portal-build-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.11']
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Python package (editable) and test deps
-        run: |
-          pip install --upgrade pip
-          pip install -e .[extras]
-          pip install pytest
-
-      - name: Run Python tests
-        run: pytest -q
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -36,16 +19,17 @@ jobs:
           cache: 'npm'
           cache-dependency-path: portal/package-lock.json
 
-      - name: Install portal deps
+      - name: Install portal dependencies
         working-directory: portal
-        run: |
-          npm ci || npm install
+        run: npm ci
 
-      - name: Lint & Build portal
+      - name: Lint portal
         working-directory: portal
-        run: |
-          npm run lint || echo "Lint warnings"
-          npm run build
+        run: npm run lint
+
+      - name: Build portal
+        working-directory: portal
+        run: npm run build
 
       - name: Upload portal dist artifact
         if: success()
@@ -53,11 +37,3 @@ jobs:
         with:
           name: portal-dist
           path: portal/dist
-
-  tag-version:
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Echo tag
-        run: echo "Building release for ${GITHUB_REF}"

@@ -1,3 +1,5 @@
+import { ConfigurationLoader } from '../config/ConfigurationLoader';
+
 export type ScenarioType = 'offline_ab' | 'shadow_ab' | 'online_ab_delta' | 'inorganic_growth';
 
 export interface FanoutCoefficients {
@@ -133,3 +135,46 @@ export const DEFAULT_CPU_PER_RPS: CpuPerRpsCoefficients = {
   cso: 0.015,
   store: 0.005
 };
+
+// Load coefficients from configuration
+export function getConfiguredCoefficients(): { fanout: FanoutCoefficients; cpuPerRps: CpuPerRpsCoefficients } {
+  try {
+    const configLoader = ConfigurationLoader.getInstance();
+    
+    // Validate configuration
+    if (!configLoader.validateConfig()) {
+      console.warn('Configuration validation failed, using default coefficients');
+      return { fanout: DEFAULT_FANOUT, cpuPerRps: DEFAULT_CPU_PER_RPS };
+    }
+    
+    const fanout = configLoader.getFanoutCoefficients();
+    const cpuPerRps = configLoader.getCpuPerRpsCoefficients();
+    
+    console.log('Using configured coefficients from', configLoader.getConfig().source);
+    console.log('CPU per RPS:', cpuPerRps);
+    console.log('Fanout ratios:', fanout);
+    
+    return { fanout, cpuPerRps };
+  } catch (error) {
+    console.error('Failed to load configuration, using defaults:', error);
+    return { fanout: DEFAULT_FANOUT, cpuPerRps: DEFAULT_CPU_PER_RPS };
+  }
+}
+
+// Helper function to create scenario input with configured coefficients
+export function createScenarioInput(
+  scenarioType: ScenarioType, 
+  parameters: ScenarioParameters,
+  overrideCoefficients?: { fanout?: Partial<FanoutCoefficients>; cpuPerRps?: Partial<CpuPerRpsCoefficients> }
+): ScenarioInput {
+  const configured = getConfiguredCoefficients();
+  
+  return {
+    scenarioType,
+    parameters,
+    coefficients: {
+      fanout: { ...configured.fanout, ...overrideCoefficients?.fanout },
+      cpuPerRps: { ...configured.cpuPerRps, ...overrideCoefficients?.cpuPerRps }
+    }
+  };
+}

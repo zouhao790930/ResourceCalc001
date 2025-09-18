@@ -1,21 +1,47 @@
-import { DEFAULT_CPU_PER_RPS, DEFAULT_FANOUT, ScenarioInput, ScenarioType, calculateScenario } from '../calc/logic';
-import React, { useCallback, useState } from 'react';
+import { 
+  DEFAULT_CPU_PER_RPS, 
+  DEFAULT_FANOUT, 
+  ScenarioInput, 
+  ScenarioType, 
+  calculateScenario,
+  getConfiguredCoefficients,
+  createScenarioInput
+} from '../calc/logic';
+import React, { useCallback, useState, useEffect } from 'react';
 
 import { Results } from './Results';
 import { ScenarioForm } from './ScenarioForm';
+import { ConfigurationDisplay } from './ConfigurationDisplay';
 
 export const App: React.FC = () => {
   const [scenarioType, setScenarioType] = useState<ScenarioType>('shadow_ab');
-  const [input, setInput] = useState<ScenarioInput>({
-    scenarioType: 'shadow_ab',
-    parameters: {
-      liveBaselineQps: 2000,
-      forkPercent: 20,
-      forkCount: 2
-    },
-    coefficients: { fanout: DEFAULT_FANOUT, cpuPerRps: DEFAULT_CPU_PER_RPS }
+  const [configuredCoefficients, setConfiguredCoefficients] = useState(() => getConfiguredCoefficients());
+  const [input, setInput] = useState<ScenarioInput>(() => {
+    const coeffs = getConfiguredCoefficients();
+    return {
+      scenarioType: 'shadow_ab',
+      parameters: {
+        liveBaselineQps: 2000,
+        forkPercent: 20,
+        forkCount: 2
+      },
+      coefficients: coeffs
+    };
   });
   const [error, setError] = useState<string | null>(null);
+  
+  // Load configuration on component mount
+  useEffect(() => {
+    try {
+      const coeffs = getConfiguredCoefficients();
+      setConfiguredCoefficients(coeffs);
+      setInput(prev => ({ ...prev, coefficients: coeffs }));
+      console.log('Portal loaded with performance coefficients from configuration');
+    } catch (error) {
+      console.error('Failed to load configuration:', error);
+      setError('Failed to load performance configuration. Using default values.');
+    }
+  }, []);
   const tabs: ScenarioType[] = ['offline_ab','shadow_ab','online_ab_delta','inorganic_growth'];
   const activeIndex = tabs.indexOf(scenarioType);
 
@@ -49,7 +75,10 @@ export const App: React.FC = () => {
 
   return (
     <div className="app-root">
-      <h1>Copilot CPU Estimation Portal</h1>
+      <div className="header-row">
+        <h1>Copilot CPU Estimation Portal</h1>
+        <ConfigurationDisplay />
+      </div>
       <div className="layout">
         <div className="panel">
           <h2>Scenario Configuration</h2>

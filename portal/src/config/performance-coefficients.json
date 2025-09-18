@@ -1,0 +1,99 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-09-18",
+  "source": "BizChat Query CPU Monitoring Dashboard",
+  "cpuCoefficients": {
+    "lssCpuPerRequest": {
+      "value": 0.04612,
+      "unit": "cores/request",
+      "description": "LSS (Large Scale Storage) CPU cost per request"
+    },
+    "storeCpuPerRequest": {
+      "value": 0.00968,
+      "unit": "cores/request", 
+      "description": "Store CPU cost per request"
+    },
+    "csoCpuPerRequest": {
+      "value": 0.00392,
+      "unit": "cores/request",
+      "description": "CSO (Compute Storage Optimization) CPU cost per request"
+    },
+    "xapCpuPerRequest": {
+      "value": 0.00011,
+      "unit": "cores/request",
+      "description": "XAP (eXtended Application Platform) CPU cost per request"
+    },
+    "totalCpuPerRequest": {
+      "value": 0.05983,
+      "unit": "cores/request",
+      "description": "Total aggregated CPU cost per request"
+    }
+  },
+  "fanoutMetrics": {
+    "xapLssFanout": {
+      "typical": 25000,
+      "peak": 30000,
+      "unit": "requests/hour",
+      "description": "XAP to LSS request fanout"
+    },
+    "lssCsoFanout": {
+      "typical": 6000,
+      "peak": 8000,
+      "unit": "requests/hour", 
+      "description": "LSS to CSO request fanout"
+    },
+    "csoStoreFanout": {
+      "typical": 10000,
+      "peak": 12500,
+      "unit": "requests/hour",
+      "description": "CSO to Store request fanout"
+    }
+  },
+  "performanceBaselines": {
+    "totalCpuCores": {
+      "baseline": 15,
+      "peak": 25,
+      "unit": "cores",
+      "description": "Total CPU cores allocated"
+    },
+    "cpuUtilization": {
+      "target": 0.7,
+      "warning": 0.8,
+      "critical": 0.9,
+      "unit": "ratio",
+      "description": "CPU utilization thresholds"
+    }
+  },
+  "costModels": {
+    "azureVmCosts": {
+      "standardD2sV3": {
+        "coresPerVm": 2,
+        "costPerHour": 0.096,
+        "currency": "USD"
+      },
+      "standardD4sV3": {
+        "coresPerVm": 4, 
+        "costPerHour": 0.192,
+        "currency": "USD"
+      },
+      "standardD8sV3": {
+        "coresPerVm": 8,
+        "costPerHour": 0.384,
+        "currency": "USD"
+      }
+    }
+  },
+  "scalingParameters": {
+    "autoScaling": {
+      "scaleOutThreshold": 0.75,
+      "scaleInThreshold": 0.4,
+      "cooldownPeriod": 300,
+      "unit": "seconds"
+    },
+    "capacityPlanning": {
+      "growthRate": 0.15,
+      "seasonalMultiplier": 1.3,
+      "bufferPercentage": 0.2
+    }
+  }
+}

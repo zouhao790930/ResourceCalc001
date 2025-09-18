@@ -1,47 +1,18 @@
-# ResourceCalc
+# ResourceCalc Portal
 
-ResourceCalc is a lightweight **Python toolkit + CLI** for resource capacity, cost, and timeline calculations, plus a companion **React (Vite + TypeScript) web portal** for interactive CPU / RPS estimation scenarios.
+An interactive **React (Vite + TypeScript) web portal** for CPU / RPS estimation scenarios in Copilot capacity planning.
 
 ## Features
 
-- Capacity calculation: estimate headcount needed, utilization.
-- Cost calculation: compute total and per-period cost with utilization factor.
-- Timeline estimation: derive number of periods required for a given scope.
-- Simple, dependency-light design.
+- **Interactive scenario-based CPU estimation** for Copilot workloads
+- **Real-time calculations** with parameter validation
+- **Professional UI** with accessibility features
+- **Visual results** with charts and data tables
+- **Shareable package** for easy distribution
 
-## Python Library Installation (development)
+## Quick Start
 
-```bash
-pip install -e .[extras]
-```
-
-## CLI Usage
-
-```bash
-resourcecalc capacity 100 10 5
-resourcecalc cost 5 1000 3 --utilization 0.9
-resourcecalc timeline 120 10
-```
-
-## Library Usage
-
-```python
-from resourcecalc.calculators.capacity import CapacityCalculator, CapacityInput
-
-ci = CapacityInput(demand=100, throughput_per_person=10, periods=5)
-result = CapacityCalculator().calculate(ci)
-print(result.headcount_needed)
-```
-
-## Testing (Python)
-
-```bash
-pytest -q
-```
-
-## Portal (Web UI)
-
-The interactive portal lives in `portal/` and supports scenario-based estimation:
+The portal supports scenario-based estimation:
 
 Scenarios:
 
@@ -57,7 +28,7 @@ Features:
 - Contextual tooltip help for every parameter
 - Accessible results table + CPU core distribution bar chart (with ARIA labels)
 
-### Run the Portal (dev)
+### Run Locally
 
 ```bash
 cd portal
@@ -65,7 +36,7 @@ npm install
 npm run dev
 ```
 
-Then open the local URL printed by Vite (typically <http://localhost:5173/>).
+Then open <http://localhost:5173/ResourceCalc001/>
 
 ### Build for Production
 
@@ -83,27 +54,32 @@ cd portal
 npm run lint
 ```
 
-## Monorepo Layout
+## Project Structure
 
 ```text
 root
-├─ src/resourcecalc/        # Python package (CLI + calculators)
-├─ tests/                   # Python tests (pytest)
-├─ portal/                  # React + Vite frontend
-└─ .github/workflows/       # CI workflow (Python + portal build)
+├─ portal/                  # React + Vite frontend (main application)
+├─ doc/                     # Design documentation
+├─ .github/workflows/       # CI workflow for portal build & deployment
+├─ SHARING.md              # Distribution guide
+└─ share.bat/.sh           # Quick build scripts
 ```
 
-## Continuous Integration
+## Deployment
 
-GitHub Actions workflow runs both Python tests and the portal TypeScript build to ensure end-to-end integrity.
+GitHub Actions workflow automatically builds and deploys the portal to GitHub Pages on every push to main.
+
+## Sharing
+
+See `SHARING.md` for multiple ways to share the portal with others, including:
+
+- Online demo via GitHub Pages
+- Downloadable ZIP package
+- Development setup
 
 ## Version
 
-See `resourcecalc.version.__version__`.
-
-## Release Tagging
-
-Current baseline tag: `v0.1.0` (initial combined library + portal).
+Portal v0.1.0
 
 ## License
 
