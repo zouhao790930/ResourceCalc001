@@ -1,0 +1,179 @@
+Here’s a **detailed input requirements spec in Markdown** for your **vibe coding session** (VS Code + GHCP) to build a **web portal prototype** for CPU estimation across evaluation types and normal Copilot usage.
+
+---
+
+# **Copilot CPU Estimation Portal — Input Requirements**
+
+## **Overview**
+The portal will allow users to **estimate CPU (cores)** for:
+- **Evaluation tests**: Offline A/B (SEVAL), Shadow A/B, Online A/B.
+- **Normal Copilot usage**: Inorganic growth (general user adoption).
+
+The tool should:
+- Accept **scenario parameters**.
+- Compute **Effective QPS**, **RPS chain**, and **Total CPU cores** using the component-aware formula.
+- Optionally estimate **memory** (future extension).
+
+---
+
+## **1. Global Settings**
+- **Forest / Environment**  
+  *Type*: Dropdown  
+  *Values*: `MSIT (NAMPRD21)`, `WW Prod`, `Test Tenant`  
+  *Purpose*: For context and default fan-out/CPU-per-RPS values.
+
+- **Time Pivot**  
+  *Type*: Dropdown  
+  *Values*: `PeakHour`, `Daily`  
+  *Purpose*: For PCF and concurrency assumptions.
+
+---
+
+## **2. Evaluation Demand Inputs**
+
+### **2.1 Demand Type**
+- *Type*: Dropdown  
+- *Values*:  
+  - `Offline A/B (SEVAL)`  
+  - `Shadow A/B`  
+  - `Online A/B (delta)`  
+
+---
+
+### **2.2 Offline A/B Inputs**
+- **Queries per Month (QPM)**  
+  *Type*: Number  
+  *Default*: `1000`  
+- **Workdays per Month**  
+  *Type*: Number  
+  *Default*: `18`  
+- **Active Hours per Day**  
+  *Type*: Number  
+  *Default*: `5`  
+
+---
+
+### **2.3 Shadow A/B Inputs**
+- **Live Baseline QPS**  
+  *Type*: Number  
+  *Default*: `2000`  
+- **Fork Percentage (%)**  
+  *Type*: Number  
+  *Default*: `20`  
+- **Fork Count**  
+  *Type*: Number  
+  *Default*: `2`  
+
+---
+
+### **2.4 Online A/B Inputs**
+- **Live Baseline QPS**  
+  *Type*: Number  
+  *Default*: `3000`  
+- **Treatment Share (0–1)**  
+  *Type*: Decimal  
+  *Default*: `0.5`  
+- **Delta Factor (0–1)**  
+  *Type*: Decimal  
+  *Default*: `0.0`  
+
+---
+
+## **3. Inorganic Growth Inputs (Normal Users)**
+- **ΔMAU (Monthly Active Users growth)**  
+  *Type*: Number  
+- **DAU/MAU Ratio (0–1)**  
+  *Type*: Decimal  
+  *Default*: `0.35`  
+- **QPD (Queries per DAU per Day)**  
+  *Type*: Decimal  
+  *Default*: `2.4`  
+- **Realization Factor (ρ)**  
+  *Type*: Decimal  
+  *Default*: `0.85`  
+- **PCF (Peak Concurrency Factor)**  
+  *Type*: Number  
+  *Default*: `6.0`  
+  *Note*: Option to auto-compute from Kusto paste (future feature).
+
+---
+
+## **4. System Parameters (Fan-out & CPU per RPS)**
+
+### **4.1 Fan-out**
+- **XAP → LSS**  
+  *Type*: Decimal  
+  *Default*: `1.0`  
+- **LSS → CSO**  
+  *Type*: Decimal  
+  *Default*: `1.0`  
+- **CSO → Store**  
+  *Type*: Decimal  
+  *Default*: `1.0`  
+
+### **4.2 CPU per RPS**
+- **XAP cores/RPS**  
+  *Type*: Decimal  
+- **LSS cores/RPS**  
+  *Type*: Decimal  
+- **CSO cores/RPS**  
+  *Type*: Decimal  
+- **Store cores/RPS**  
+  *Type*: Decimal  
+
+*(Defaults pulled from Jarvis/Kusto for MSIT PeakHour.)*
+
+---
+
+## **5. Output Requirements**
+- **Effective QPS** (computed per scenario).
+- **RPS chain**: XAP, LSS, CSO, Store.
+- **CPU per component** and **Total CPU (cores)**.
+- **Optional**: Dynamic Memory (MB) and Total Memory (MB).
+
+---
+
+## **6. UX Features**
+- **Scenario Selector**: Tabs for `Offline`, `Shadow`, `Online`, `Inorganic Growth`.
+- **Compute Button**: Trigger calculation and display results.
+- **Results Panel**:
+  - Table: Inputs → Outputs.
+  - Chart: CPU cores by component.
+- **Export**: Download results as CSV or JSON.
+- **Future**: Connect to Kusto API for auto-fetch PCF and CPU-per-RPS.
+
+---
+
+## **7. Calculation Logic**
+- **Offline**:  
+  \[
+  QPS = \\frac{QPM}{\\text{Workdays} \\times \\text{Active Hours} \\times 3600}
+  \]
+- **Shadow**:  
+  \[
+  QPS_Δ = \\text{Live QPS} \\times \\frac{\\text{Fork %}}{100} \\times \\text{Fork Count}
+  \]
+- **Online**:  
+  \[
+  QPS_Δ = \\text{Live QPS} \\times \\text{Treatment Share} \\times \\text{Delta Factor}
+  \]
+- **Inorganic Growth**:  
+  \[
+  \\text{BizChat QPS}_{\\text{Peak}} = \\left(\\frac{ΔDAU \\times QPD \\times ρ}{86{,}400}\\right) \\times PCF
+  \]
+- **CPU (cores)**:  
+  \[
+  \\text{Total CPU} = (\\text{XAP RPS} \\times XapCpuPerRps) + (\\text{LSS RPS} \\times LssCpuPerRps) + (\\text{CSO RPS} \\times CsoCpuPerRps) + (\\text{Store RPS} \\times StoreCpuPerRps)
+  \]
+
+---
+
+## **8. Tech Notes**
+- **Frontend**: React or plain HTML/CSS/JS (for vibe coding).
+- **Backend**: Node.js or Python Flask (optional for now).
+- **Deployment**: GHCP Codespaces → Azure Static Web Apps (future).
+- **Data**: Hardcode defaults; allow manual override.
+
+---
+
+### ✅ Do you want me to **also prepare a JSON schema** for these inputs (so you can wire it directly into your vibe coding session)? Or should I **draft the HTML form structure** with placeholders for each input?
