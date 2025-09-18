@@ -46,6 +46,20 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
       // Clear directQps when toggling off to ensure fallback to detailed parameters
       const { directQps, ...otherParams } = input.parameters;
       onChange({ ...input, parameters: otherParams });
+    } else {
+      // Set default directQps when toggling on based on scenario type
+      const defaultQps = getDefaultQpsForScenario(scenarioType);
+      onChange({ ...input, parameters: { ...input.parameters, directQps: defaultQps } });
+    }
+  };
+
+  const getDefaultQpsForScenario = (scenario: string): number => {
+    switch (scenario) {
+      case 'offline_ab': return 100;
+      case 'shadow_ab': return 400;
+      case 'online_ab_delta': return 150;
+      case 'inorganic_growth': return 50;
+      default: return 100;
     }
   };
 
