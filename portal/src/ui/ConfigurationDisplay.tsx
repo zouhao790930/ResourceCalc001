@@ -51,11 +51,11 @@ export const ConfigurationDisplay: React.FC = () => {
         </div>
 
         <div className="config-section">
-          <h4>Fanout Metrics (req/hour)</h4>
+          <h4>Fanout Metrics (requests/request)</h4>
           <div className="config-grid">
-            <div><strong>XAP→LSS:</strong> {config.fanoutMetrics.xapLssFanout.typical.toLocaleString()} (peak: {config.fanoutMetrics.xapLssFanout.peak.toLocaleString()})</div>
-            <div><strong>LSS→CSO:</strong> {config.fanoutMetrics.lssCsoFanout.typical.toLocaleString()} (peak: {config.fanoutMetrics.lssCsoFanout.peak.toLocaleString()})</div>
-            <div><strong>CSO→Store:</strong> {config.fanoutMetrics.csoStoreFanout.typical.toLocaleString()} (peak: {config.fanoutMetrics.csoStoreFanout.peak.toLocaleString()})</div>
+            <div><strong>XAP→LSS:</strong> {config.fanoutMetrics.xapLssFanout.typical} (peak: {config.fanoutMetrics.xapLssFanout.peak})</div>
+            <div><strong>LSS→CSO:</strong> {config.fanoutMetrics.lssCsoFanout.typical} (peak: {config.fanoutMetrics.lssCsoFanout.peak})</div>
+            <div><strong>CSO→Store:</strong> {config.fanoutMetrics.csoStoreFanout.typical} (peak: {config.fanoutMetrics.csoStoreFanout.peak})</div>
           </div>
         </div>
 
