@@ -58,6 +58,14 @@ function ensurePositive(name: string, v: number | undefined, allowZero = false) 
   return v;
 }
 
+function getValueOrDefault(value: number | undefined, defaultValue: number, allowZero = false): number {
+  const finalValue = value ?? defaultValue;
+  if (allowZero) {
+    if (finalValue < 0) return defaultValue;
+  } else if (finalValue <= 0) return defaultValue;
+  return finalValue;
+}
+
 export function calculateScenario(input: ScenarioInput): CalculationResult {
   const { scenarioType, parameters: p, coefficients } = input;
   const { fanout, cpuPerRps } = coefficients;
@@ -73,9 +81,9 @@ export function calculateScenario(input: ScenarioInput): CalculationResult {
       if (p.directQps !== undefined) {
         effectiveQps = ensurePositive('directQps', p.directQps);
       } else {
-        const qpm = ensurePositive('queriesPerMonth', p.queriesPerMonth);
-        const wd = ensurePositive('workdaysPerMonth', p.workdaysPerMonth);
-        const hours = ensurePositive('activeHoursPerDay', p.activeHoursPerDay);
+        const qpm = getValueOrDefault(p.queriesPerMonth, 1000);
+        const wd = getValueOrDefault(p.workdaysPerMonth, 18);
+        const hours = getValueOrDefault(p.activeHoursPerDay, 5);
         effectiveQps = qpm / (wd * hours * 3600);
       }
       break;
@@ -84,9 +92,9 @@ export function calculateScenario(input: ScenarioInput): CalculationResult {
       if (p.directQps !== undefined) {
         effectiveQps = ensurePositive('directQps', p.directQps);
       } else {
-        const live = ensurePositive('liveBaselineQps', p.liveBaselineQps, true);
-        const forkPct = ensurePositive('forkPercent', p.forkPercent, true);
-        const forkCount = ensurePositive('forkCount', p.forkCount);
+        const live = getValueOrDefault(p.liveBaselineQps, 2000, true);
+        const forkPct = getValueOrDefault(p.forkPercent, 20, true);
+        const forkCount = getValueOrDefault(p.forkCount, 2);
         effectiveQps = live * (forkPct / 100) * forkCount;
       }
       break;
@@ -95,11 +103,17 @@ export function calculateScenario(input: ScenarioInput): CalculationResult {
       if (p.directQps !== undefined) {
         effectiveQps = ensurePositive('directQps', p.directQps);
       } else {
-        const live = ensurePositive('liveBaselineQps', p.liveBaselineQps, true);
-        const share = ensurePositive('treatmentShare', p.treatmentShare, true);
-        const delta = ensurePositive('deltaFactor', p.deltaFactor, true);
-        if (share > 1 || delta > 1) throw new Error('Fractions must be <= 1');
-        effectiveQps = live * share * delta;
+        const live = getValueOrDefault(p.liveBaselineQps, 3000, true);
+        const share = getValueOrDefault(p.treatmentShare, 0.5, true);
+        const delta = getValueOrDefault(p.deltaFactor, 0.1, true);
+        if (share > 1 || delta > 1) {
+          // Use defaults if values are invalid
+          const safeShare = share > 1 ? 0.5 : share;
+          const safeDelta = delta > 1 ? 0.1 : delta;
+          effectiveQps = live * safeShare * safeDelta;
+        } else {
+          effectiveQps = live * share * delta;
+        }
       }
       break;
     }
@@ -107,14 +121,18 @@ export function calculateScenario(input: ScenarioInput): CalculationResult {
       if (p.directQps !== undefined) {
         effectiveQps = ensurePositive('directQps', p.directQps);
       } else {
-        const deltaMau = ensurePositive('deltaMau', p.deltaMau, true);
-        const ratio = ensurePositive('dauMauRatio', p.dauMauRatio, true);
-        const qpd = ensurePositive('qpd', p.qpd, true);
-        const realization = ensurePositive('realizationFactor', p.realizationFactor, true);
-        const pcf = ensurePositive('pcf', p.pcf);
-        if ([ratio, realization].some(v => v > 1)) throw new Error('Ratios must be <= 1');
-        const deltaDau = deltaMau * ratio;
-        effectiveQps = ((deltaDau * qpd * realization) / 86400) * pcf;
+        const deltaMau = getValueOrDefault(p.deltaMau, 10000, true);
+        const ratio = getValueOrDefault(p.dauMauRatio, 0.35, true);
+        const qpd = getValueOrDefault(p.qpd, 2.4, true);
+        const realization = getValueOrDefault(p.realizationFactor, 0.85, true);
+        const pcf = getValueOrDefault(p.pcf, 6.0);
+        
+        // Use safe values if fractions are invalid
+        const safeRatio = ratio > 1 ? 0.35 : ratio;
+        const safeRealization = realization > 1 ? 0.85 : realization;
+        
+        const deltaDau = deltaMau * safeRatio;
+        effectiveQps = ((deltaDau * qpd * safeRealization) / 86400) * pcf;
       }
       break;
     }
