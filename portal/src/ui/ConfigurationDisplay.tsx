@@ -51,11 +51,11 @@ export const ConfigurationDisplay: React.FC = () => {
         </div>
 
         <div className="config-section">
-          <h4>Fanout Metrics (requests/request)</h4>
+          <h4>Fanout Metrics</h4>
           <div className="config-grid">
-            <div><strong>XAP→LSS:</strong> {config.fanoutMetrics.xapLssFanout.typical} (peak: {config.fanoutMetrics.xapLssFanout.peak})</div>
-            <div><strong>LSS→CSO:</strong> {config.fanoutMetrics.lssCsoFanout.typical} (peak: {config.fanoutMetrics.lssCsoFanout.peak})</div>
-            <div><strong>CSO→Store:</strong> {config.fanoutMetrics.csoStoreFanout.typical} (peak: {config.fanoutMetrics.csoStoreFanout.peak})</div>
+            <div><strong>XAP→LSS:</strong> {config.fanoutMetrics.xapLssFanout.typical.toLocaleString()} {config.fanoutMetrics.xapLssFanout.unit} (peak: {config.fanoutMetrics.xapLssFanout.peak.toLocaleString()})</div>
+            <div><strong>LSS→CSO:</strong> {config.fanoutMetrics.lssCsoFanout.typical} {config.fanoutMetrics.lssCsoFanout.unit} (peak: {config.fanoutMetrics.lssCsoFanout.peak})</div>
+            <div><strong>CSO→Store:</strong> {config.fanoutMetrics.csoStoreFanout.typical} {config.fanoutMetrics.csoStoreFanout.unit} (peak: {config.fanoutMetrics.csoStoreFanout.peak})</div>
           </div>
         </div>
 
