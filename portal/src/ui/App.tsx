@@ -11,7 +11,6 @@ import React, { useCallback, useState, useEffect } from 'react';
 
 import { Results } from './Results';
 import { ScenarioForm } from './ScenarioForm';
-import { ConfigurationDisplay } from './ConfigurationDisplay';
 
 export const App: React.FC = () => {
   const [scenarioType, setScenarioType] = useState<ScenarioType>('shadow_ab');
@@ -77,7 +76,6 @@ export const App: React.FC = () => {
     <div className="app-root">
       <div className="header-row">
         <h1>Copilot CPU Estimation Portal</h1>
-        <ConfigurationDisplay />
       </div>
       <div className="layout">
         <div className="panel">
