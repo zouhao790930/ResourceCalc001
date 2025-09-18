@@ -31,22 +31,22 @@
   },
   "fanoutMetrics": {
     "xapLssFanout": {
-      "typical": 25000,
+      "typical": 3500,
       "peak": 30000,
       "unit": "requests/hour",
-      "description": "XAP to LSS request fanout"
+      "description": "XAP to LSS request fanout (7-day average ~3.5k, peak spikes to 30k)"
     },
     "lssCsoFanout": {
-      "typical": 6000,
-      "peak": 8000,
-      "unit": "requests/hour", 
-      "description": "LSS to CSO request fanout"
+      "typical": 4.5,
+      "peak": 8.0,
+      "unit": "requests/request", 
+      "description": "LSS to CSO request fanout ratio (7-day average ~4.5, peak ~8)"
     },
     "csoStoreFanout": {
-      "typical": 10000,
-      "peak": 12500,
-      "unit": "requests/hour",
-      "description": "CSO to Store request fanout"
+      "typical": 6.5,
+      "peak": 12.0,
+      "unit": "requests/request",
+      "description": "CSO to Store request fanout ratio (7-day average ~6.5, peak ~12)"
     }
   },
   "performanceBaselines": {
