@@ -3,50 +3,50 @@
   "lastUpdated": "2025-09-18",
   "source": "BizChat Query CPU Monitoring Dashboard",
   "cpuCoefficients": {
+    "xapCpuPerRequest": {
+      "value": 0.00011,
+      "unit": "cores/request",
+      "description": "XAP (eXtended Application Platform) CPU cost per request"
+    },
     "lssCpuPerRequest": {
       "value": 0.04612,
       "unit": "cores/request",
       "description": "LSS (Large Scale Storage) CPU cost per request"
-    },
-    "storeCpuPerRequest": {
-      "value": 0.00968,
-      "unit": "cores/request", 
-      "description": "Store CPU cost per request"
     },
     "csoCpuPerRequest": {
       "value": 0.00392,
       "unit": "cores/request",
       "description": "CSO (Compute Storage Optimization) CPU cost per request"
     },
-    "xapCpuPerRequest": {
-      "value": 0.00011,
-      "unit": "cores/request",
-      "description": "XAP (eXtended Application Platform) CPU cost per request"
+    "storeCpuPerRequest": {
+      "value": 0.00968,
+      "unit": "cores/request", 
+      "description": "Store (Storage Service) CPU cost per request"
     },
     "totalCpuPerRequest": {
       "value": 0.05983,
       "unit": "cores/request",
-      "description": "Total aggregated CPU cost per request"
+      "description": "Total aggregated CPU cost per request (sum of all components)"
     }
   },
   "fanoutMetrics": {
     "xapLssFanout": {
-      "typical": 3500,
-      "peak": 30000,
-      "unit": "requests/hour",
-      "description": "XAP to LSS request fanout (7-day average ~3.5k, peak spikes to 30k)"
+      "typical": 2.5,
+      "peak": 3.0,
+      "unit": "requests/request",
+      "description": "XAP to LSS request fanout ratio (each XAP request generates 2.5 LSS requests)"
     },
     "lssCsoFanout": {
-      "typical": 4.5,
-      "peak": 8.0,
+      "typical": 0.6,
+      "peak": 0.8,
       "unit": "requests/request", 
-      "description": "LSS to CSO request fanout ratio (7-day average ~4.5, peak ~8)"
+      "description": "LSS to CSO request fanout ratio (each LSS request generates 0.6 CSO requests)"
     },
     "csoStoreFanout": {
-      "typical": 6.5,
-      "peak": 12.0,
+      "typical": 1.0,
+      "peak": 1.2,
       "unit": "requests/request",
-      "description": "CSO to Store request fanout ratio (7-day average ~6.5, peak ~12)"
+      "description": "CSO to Store request fanout ratio (each CSO request generates 1.0 Store requests)"
     }
   },
   "performanceBaselines": {
