@@ -51,14 +51,12 @@ export class ConfigurationLoader {
   
   // Convert dashboard coefficients to calculation logic format
   public getFanoutCoefficients() {
-    // Mixed units from monitoring data (original extracted values):
-    // - XAP→LSS: absolute requests/hour (~3.5k), need to convert to ratio
-    // - LSS→CSO: already a ratio (~4.5 requests per LSS request)
-    // - CSO→Store: already a ratio (~6.5 requests per CSO request)
+    // All fanout metrics are now standardized as ratios (requests/request)
+    // No conversion needed - use values directly
     return {
-      xap_lss: this.config.fanoutMetrics.xapLssFanout.typical / 1000, // Convert 3500 to ~3.5 ratio
-      lss_cso: this.config.fanoutMetrics.lssCsoFanout.typical, // Already a ratio: 4.5
-      cso_store: this.config.fanoutMetrics.csoStoreFanout.typical // Already a ratio: 6.5
+      xap_lss: this.config.fanoutMetrics.xapLssFanout.typical, // 3.5 requests/request
+      lss_cso: this.config.fanoutMetrics.lssCsoFanout.typical, // 4.5 requests/request
+      cso_store: this.config.fanoutMetrics.csoStoreFanout.typical // 6.5 requests/request
     };
   }
   
