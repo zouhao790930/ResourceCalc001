@@ -30,10 +30,10 @@
   },
   "fanoutMetrics": {
     "xapLssFanout": {
-      "typical": 3500,
+      "typical": 2500,
       "peak": 30000,
       "unit": "requests/request",
-      "description": "XAP to LSS request fanout ratio (each XAP request generates 3,500 LSS requests)"
+      "description": "XAP to LSS request fanout ratio (each XAP request generates 2,500 LSS requests)"
     },
     "lssCsoFanout": {
       "typical": 4.5,
