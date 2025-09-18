@@ -505,3 +505,55 @@ button:focus, input:focus {
     grid-template-columns: 1fr;
   }
 }
+
+/* Calculation Explanation Styles */
+.calculation-explanation {
+  margin-top: 1rem;
+}
+
+.calculation-explanation summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--primary);
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-light);
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.calculation-explanation summary:hover {
+  color: var(--primary-hover);
+  background: var(--bg-accent);
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  margin: 0 -0.5rem;
+}
+
+.calculation-explanation[open] summary {
+  margin-bottom: 1rem;
+}
+
+.explanation {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--primary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.explanation strong {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.explanation em {
+  color: var(--text-secondary);
+  font-style: italic;
+  display: block;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-light);
+}

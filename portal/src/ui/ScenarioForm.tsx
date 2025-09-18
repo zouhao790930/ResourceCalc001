@@ -109,6 +109,65 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
     );
   };
 
+  const renderQpsCalculationExplanation = () => {
+    switch (scenarioType) {
+      case 'offline_ab':
+        return (
+          <div className="explanation">
+            <strong>Parameters → QPS Calculation:</strong><br/>
+            QPS = Queries/Month ÷ (Workdays/Month × Hours/Day × 3600 seconds/hour)<br/>
+            <em>Example: 1000 queries ÷ (18 days × 5 hours × 3600s) = 0.0031 QPS</em>
+          </div>
+        );
+      case 'shadow_ab':
+        return (
+          <div className="explanation">
+            <strong>Parameters → QPS Calculation:</strong><br/>
+            QPS = Live Baseline QPS × (Fork % ÷ 100) × Fork Count<br/>
+            <em>Example: 2000 QPS × (20% ÷ 100) × 2 forks = 800 QPS</em>
+          </div>
+        );
+      case 'online_ab_delta':
+        return (
+          <div className="explanation">
+            <strong>Parameters → QPS Calculation:</strong><br/>
+            QPS = Live Baseline QPS × Treatment Share × Delta Factor<br/>
+            <em>Example: 3000 QPS × 0.5 share × 0.1 delta = 150 QPS</em>
+          </div>
+        );
+      case 'inorganic_growth':
+        return (
+          <div className="explanation">
+            <strong>Parameters → QPS Calculation:</strong><br/>
+            ΔDAU = ΔMAU × DAU/MAU Ratio<br/>
+            Daily QPS = (ΔDAU × QPD × Realization Factor) ÷ 86400 seconds/day<br/>
+            Peak QPS = Daily QPS × Peak Concurrency Factor (PCF)<br/>
+            <em>Example: (10000 × 0.35 × 2.4 × 0.85) ÷ 86400 × 6 = 2.08 QPS</em>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderCpuCalculationExplanation = () => (
+    <div className="explanation">
+      <strong>QPS → CPU Cores Calculation:</strong><br/>
+      1. <strong>Request Distribution:</strong><br/>
+      &nbsp;&nbsp;XAP RPS = Effective QPS<br/>
+      &nbsp;&nbsp;LSS RPS = XAP RPS × {input.coefficients.fanout.xap_lss} (XAP→LSS fanout)<br/>
+      &nbsp;&nbsp;CSO RPS = LSS RPS × {input.coefficients.fanout.lss_cso} (LSS→CSO fanout)<br/>
+      &nbsp;&nbsp;Store RPS = CSO RPS × {input.coefficients.fanout.cso_store} (CSO→Store fanout)<br/>
+      <br/>
+      2. <strong>CPU Core Requirements:</strong><br/>
+      &nbsp;&nbsp;XAP Cores = XAP RPS × {input.coefficients.cpuPerRps.xap} cores/req<br/>
+      &nbsp;&nbsp;LSS Cores = LSS RPS × {input.coefficients.cpuPerRps.lss} cores/req<br/>
+      &nbsp;&nbsp;CSO Cores = CSO RPS × {input.coefficients.cpuPerRps.cso} cores/req<br/>
+      &nbsp;&nbsp;Store Cores = Store RPS × {input.coefficients.cpuPerRps.store} cores/req<br/>
+      &nbsp;&nbsp;<strong>Total = Sum of all service cores</strong>
+    </div>
+  );
+
   return (
     <form className="grid-form" onSubmit={e => e.preventDefault()}>
       {scenarioType === 'offline_ab' && <>
@@ -131,6 +190,10 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
             {numberField('Queries / Month', 'queriesPerMonth', p.queriesPerMonth ?? 1000)}
             {numberField('Workdays / Month', 'workdaysPerMonth', p.workdaysPerMonth ?? 18)}
             {numberField('Active Hours / Day', 'activeHoursPerDay', p.activeHoursPerDay ?? 5)}
+            <details className="calculation-explanation full-row">
+              <summary>📊 How are parameters converted to QPS?</summary>
+              {renderQpsCalculationExplanation()}
+            </details>
           </>
         )}
       </>}
@@ -154,6 +217,10 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
             {numberField('Live Baseline QPS', 'liveBaselineQps', p.liveBaselineQps ?? 2000)}
             {numberField('Fork %', 'forkPercent', p.forkPercent ?? 20)}
             {numberField('Fork Count', 'forkCount', p.forkCount ?? 2, '1')}
+            <details className="calculation-explanation full-row">
+              <summary>📊 How are parameters converted to QPS?</summary>
+              {renderQpsCalculationExplanation()}
+            </details>
           </>
         )}
       </>}
@@ -177,6 +244,10 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
             {numberField('Live Baseline QPS', 'liveBaselineQps', p.liveBaselineQps ?? 3000)}
             {numberField('Treatment Share (0-1)', 'treatmentShare', p.treatmentShare ?? 0.5)}
             {numberField('Delta Factor (0-1)', 'deltaFactor', p.deltaFactor ?? 0.1)}
+            <details className="calculation-explanation full-row">
+              <summary>📊 How are parameters converted to QPS?</summary>
+              {renderQpsCalculationExplanation()}
+            </details>
           </>
         )}
       </>}
@@ -202,9 +273,18 @@ export const ScenarioForm: React.FC<Props> = ({ scenarioType, input, onChange })
             {numberField('QPD', 'qpd', p.qpd ?? 2.4)}
             {numberField('Realization Factor ρ (0-1)', 'realizationFactor', p.realizationFactor ?? 0.85)}
             {numberField('PCF', 'pcf', p.pcf ?? 6.0)}
+            <details className="calculation-explanation full-row">
+              <summary>📊 How are parameters converted to QPS?</summary>
+              {renderQpsCalculationExplanation()}
+            </details>
           </>
         )}
       </>}
+
+      <details className="calculation-explanation full-row">
+        <summary>🔧 How is QPS converted to CPU cores?</summary>
+        {renderCpuCalculationExplanation()}
+      </details>
 
       <details className="advanced full-row" aria-label="Advanced coefficients">
         <summary>Advanced Coefficients</summary>
