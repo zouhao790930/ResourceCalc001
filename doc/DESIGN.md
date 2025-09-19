@@ -1,53 +1,69 @@
-# Copilot CPU Estimation Portal — Design Specification
+# ResourceCalc Portal — Design Specification
 
 ## 1. Document Control
-- Version: 0.1.0 (Draft)
-- Date: 2025-09-15
-- Source Requirements: `doc/requirements.txt`
-- Owner: (assign)
+- Version: 2.0.0 (Current Implementation)
+- Date: 2025-09-19
+- Implementation Status: ✅ **DEPLOYED** - Live at https://zouhao790930.github.io/ResourceCalc001/
+- Owner: GitHub User zouhao790930
+- Repository: https://github.com/zouhao790930/ResourceCalc001
 
 ## 2. Overview
-A web-based interactive portal for estimating CPU (cores) consumption across different evaluation scenarios of Copilot (Offline A/B, Shadow A/B, Online A/B delta) and standard usage (Inorganic growth). The tool converts business or experiment parameters into effective QPS, propagates request fan-out across components (XAP, LSS, CSO, Store), and computes per-component and total CPU requirements. It also provides an RPS chain breakdown and supports future memory estimation.
+A production-ready web-based interactive portal for estimating CPU (cores) consumption across different evaluation scenarios of Copilot services. The tool provides dual input modes (detailed parameters vs. direct QPS), converts business parameters into effective QPS, propagates request fan-out across components (XAP, LSS, CSO, Store), and computes per-component and total CPU requirements with comprehensive calculation explanations.
+
+### Current Implementation Features ✅
+- **Four Scenario Types**: Offline A/B, Shadow A/B, Online A/B Delta, Inorganic Growth
+- **Dual Input Modes**: Detailed parameter breakdown OR direct QPS input per scenario
+- **Real Performance Coefficients**: Extracted from actual BizChat monitoring dashboards
+- **Interactive Calculations**: Real-time updates with graceful validation
+- **Expandable Explanations**: Step-by-step calculation breakdowns with formulas
+- **Professional UI**: Responsive design with accessibility features
+- **GitHub Pages Deployment**: Automated CI/CD with production hosting
 
 ## 3. Goals & Non-Goals
-### Goals
-- Rapid, interactive what-if modeling for engineering & capacity planning.
-- Consistent calculation logic with transparent formulas.
-- Ability to compare scenarios and export results.
-- Extensible foundation for future auto-fetch (Kusto / Jarvis) defaults.
+### Goals ✅ (Achieved)
+- ✅ Rapid, interactive what-if modeling for engineering & capacity planning
+- ✅ Consistent calculation logic with transparent formulas and explanations
+- ✅ Dual input modes for flexibility (parameters vs. direct QPS)
+- ✅ Real performance coefficients from production monitoring data
+- ✅ Professional UI with responsive design and accessibility
+- ✅ GitHub Pages deployment with automated CI/CD
 
-### Non-Goals (v1)
-- Live integration with production metrics or Kusto APIs.
-- Authentication / RBAC (assume internal trusted environment or static hosting).
-- Persistence of scenarios across sessions (local storage optional nice-to-have).
-- Real-time collaboration.
+### Goals 🔄 (Future Enhancements)
+- 🔄 Scenario comparison and export results (planned)
+- 🔄 Extensible foundation for future auto-fetch (Kusto / Jarvis) defaults
 
-## 4. Primary Use Cases
-| ID | Actor | Scenario | Outcome |
-|----|-------|----------|---------|
-| UC-1 | Capacity Planner | Estimate CPU for a new Shadow A/B plan | Total cores per component |
-| UC-2 | Engineer | Tune fork parameters to fit existing cluster capacity | Adjusted core totals |
-| UC-3 | Product Analyst | Evaluate added load from Online A/B delta | Additional peak cores |
-| UC-4 | Strategy | Project inorganic growth impact | Incremental peak cores |
-| UC-5 | Engineer | Export calculation for review | Download CSV/JSON |
-| UC-6 | Analyst | Cross-compare 2–3 scenarios | Side-by-side view (stretch) |
+### Non-Goals (v2)
+- Live integration with production metrics or Kusto APIs (future consideration)
+- Authentication / RBAC (static hosting, internal tool)
+- Persistence of scenarios across sessions (client-side only)
+- Real-time collaboration
 
-## 5. Functional Requirements
-| Ref | Requirement |
-|-----|-------------|
-| FR-1 | Provide scenario selection tabs: Offline, Shadow, Online, Inorganic Growth |
-| FR-2 | Accept all parameter inputs defined in requirements spec with defaults |
-| FR-3 | Validate numeric & domain constraints (ranges, > 0, 0–1 factors) |
-| FR-4 | Compute Effective QPS per scenario using defined formulas |
-| FR-5 | Apply fan-out chain to derive RPS per component |
-| FR-6 | Compute CPU cores per component using cores/RPS coefficients |
-| FR-7 | Aggregate total CPU cores |
-| FR-8 | Display results (table + chart) |
-| FR-9 | Allow export to CSV & JSON |
-| FR-10 | Provide form reset and per-scenario recompute |
-| FR-11 | Support optional advanced panel for overriding fan-out & cores/RPS |
-| FR-12 | (Ext) Provide memory estimates placeholders if coefficients added |
-| FR-13 | (Ext) Provide scenario duplication / comparison (phase 2) |
+## 4. Primary Use Cases ✅ (All Implemented)
+| ID | Actor | Scenario | Outcome | Status |
+|----|-------|----------|---------|---------|
+| UC-1 | Capacity Planner | Estimate CPU for a new Shadow A/B plan | Total cores per component | ✅ Implemented |
+| UC-2 | Engineer | Tune fork parameters to fit existing cluster capacity | Adjusted core totals | ✅ Implemented |
+| UC-3 | Product Analyst | Evaluate added load from Online A/B delta | Additional peak cores | ✅ Implemented |
+| UC-4 | Strategy | Project inorganic growth impact | Incremental peak cores | ✅ Implemented |
+| UC-5 | Engineer | Use direct QPS for quick estimates | Bypass parameter complexity | ✅ **NEW** - Dual input modes |
+| UC-6 | Engineer | Understand calculation methodology | Step-by-step formula breakdown | ✅ **NEW** - Expandable explanations |
+
+## 5. Functional Requirements ✅ (Implementation Status)
+| Ref | Requirement | Status | Implementation Notes |
+|-----|-------------|--------|---------------------|
+| FR-1 | Provide scenario selection tabs: Offline, Shadow, Online, Inorganic Growth | ✅ | React tabbed interface with keyboard navigation |
+| FR-2 | Accept all parameter inputs defined with defaults | ✅ | Comprehensive parameter support with scenario-specific defaults |
+| FR-3 | Validate numeric & domain constraints with graceful fallbacks | ✅ | getValueOrDefault() pattern prevents crashes |
+| FR-4 | Compute Effective QPS per scenario using defined formulas | ✅ | scenario-specific calculation logic |
+| FR-5 | Apply fan-out chain to derive RPS per component | ✅ | XAP→LSS→CSO→Store chain with real coefficients |
+| FR-6 | Compute CPU cores per component using cores/RPS coefficients | ✅ | Real coefficients from BizChat monitoring |
+| FR-7 | Aggregate total CPU cores | ✅ | Sum across all components |
+| FR-8 | Display results (table + visual breakdown) | ✅ | Comprehensive results display |
+| FR-9 | **NEW** Dual input modes (parameters vs. direct QPS) | ✅ | Toggle between detailed and direct input |
+| FR-10 | **NEW** Expandable calculation explanations | ✅ | Step-by-step formula breakdowns |
+| FR-11 | Support advanced panel for overriding fan-out & cores/RPS | ✅ | Collapsible advanced coefficients section |
+| FR-12 | **NEW** Real performance coefficients | ✅ | Extracted from actual monitoring dashboards |
+| FR-13 | **NEW** Professional responsive UI | ✅ | Mobile-friendly with accessibility features |
 
 ## 6. Non-Functional Requirements
 | Category | Requirement |
