@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResourceCalc Portal - Demo Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            height: 100vh;
+            padding: 60px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide h1 {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .slide h2 {
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            color: #ffeb3b;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .slide h3 {
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            color: #81c784;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.3em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            max-width: 900px;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .feature-grid.one-row {
+            grid-template-columns: 1fr 1fr 1fr;
+            max-width: 1200px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+            animation: fadeInUp 1s ease-out 1.2s both;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-card h4 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            color: #ffeb3b;
+        }
+
+        .demo-steps {
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin-top: 30px;
+            max-width: 800px;
+        }
+
+        .demo-steps ol {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .demo-steps li {
+            counter-increment: step-counter;
+            margin-bottom: 20px;
+            padding-left: 50px;
+            position: relative;
+            font-size: 1.2em;
+        }
+
+        .demo-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #ffeb3b;
+            color: #333;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .speaker-notes {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            font-size: 0.9em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .speaker-notes.visible {
+            opacity: 1;
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            display: flex;
+            gap: 10px;
+        }
+
+        .controls button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .controls button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .controls button:active {
+            transform: translateY(0);
+        }
+
+        .fullscreen-btn {
+            background: rgba(255, 193, 7, 0.3) !important;
+            border: 1px solid rgba(255, 193, 7, 0.5) !important;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(255, 193, 7, 0.5) !important;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            z-index: 1001;
+        }
+
+        .highlight {
+            background: linear-gradient(45deg, #ffeb3b, #ff9800);
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 25px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tech-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            animation: fadeInUp 1s ease-out 1.5s both;
+        }
+
+        /* Fullscreen styles */
+        .presentation-container:-webkit-full-screen {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .presentation-container:-moz-full-screen {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .presentation-container:fullscreen {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Navigation hints */
+        .nav-hint {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            opacity: 0.7;
+            z-index: 1000;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #e1f5fe;
+            margin-top: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <h1>🚀 ResourceCalc Portal</h1>
+            <h2>Copilot Scenario Resource Estimation</h2>
+            <p class="subtitle">From Concept to Production-Ready Application</p>
+        </div>
+
+        <!-- Slide 2: Problem & Solution -->
+        <div class="slide">
+            <h2>The Challenge</h2>
+            <div class="feature-grid one-row">
+                <div class="feature-card">
+                    <h4>❌ Manual Calculations</h4>
+                    <p>Complex Copilot scenario planning requires spreadsheets and manual calculations</p>
+                </div>
+                <div class="feature-card">
+                    <h4>❌ No Data Persistence</h4>
+                    <p>Work gets lost between sessions, no way to share calculations</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Our Solution</h4>
+                    <p>Automated Copilot scenario calculations with smart data management</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Key Features -->
+        <div class="slide">
+            <h2>🎯 Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4><span class="emoji">🧮</span>Smart Calculations</h4>
+                    <p>4 Copilot scenario types with automatic CPU, cost, and timeline estimation</p>
+                </div>
+                <div class="feature-card">
+                    <h4><span class="emoji">💾</span>Auto-Save</h4>
+                    <p>Browser-based persistence across sessions</p>
+                </div>
+                <div class="feature-card">
+                    <h4><span class="emoji">📤</span>Export/Import</h4>
+                    <p>Share calculations via JSON files</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Live Demo Steps -->
+        <div class="slide">
+            <h2>🎬 Live Demo</h2>
+            <div class="demo-steps">
+                <ol>
+                    <li>Navigate to the live portal</li>
+                    <li>Enter calculation parameters</li>
+                    <li>View real-time results</li>
+                    <li>Export calculation data</li>
+                    <li>Import and restore data</li>
+                    <li>Switch between scenarios</li>
+                </ol>
+            </div>
+            <div class="highlight" style="margin-top: 30px;">
+                https://zouhao790930.github.io/ResourceCalc001/
+            </div>
+        </div>
+
+        <!-- Slide 5: Thank You -->
+        <div class="slide">
+            <h1>Thank You! 🙏</h1>
+            <h2>Questions & Discussion</h2>
+            <div style="margin-top: 50px;">
+                <div class="highlight">Live Demo Ready</div>
+                <p style="margin-top: 30px; font-size: 1.1em;">
+                    Portal: https://zouhao790930.github.io/ResourceCalc001/<br>
+                    Source: https://github.com/zouhao790930/ResourceCalc001
+                </p>
+            </div>
+        </div>
+
+        <!-- Speaker Notes (Hidden by default) -->
+        <div class="speaker-notes" id="speakerNotes">
+            <strong>Speaker Notes:</strong> <span id="currentNotes"></span>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button onclick="toggleFullscreen()" class="fullscreen-btn" title="Toggle Fullscreen">🔳 Fullscreen</button>
+            <button onclick="toggleNotes()" title="Toggle Speaker Notes">📝 Notes</button>
+            <button onclick="previousSlide()" title="Previous Slide">⬅️ Prev</button>
+            <button onclick="nextSlide()" title="Next Slide">➡️ Next</button>
+        </div>
+
+        <!-- Navigation Hint -->
+        <div class="nav-hint">
+            Use arrow keys, spacebar, or buttons to navigate • Press F11 or click Fullscreen for best experience
+        </div>
+
+        <!-- Slide Counter -->
+        <div class="slide-counter">
+            <span id="currentSlide">1</span> / <span id="totalSlides">7</span>
+        </div>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        // Speaker notes for each slide
+        const speakerNotes = [
+            "Welcome! I'm excited to show you ResourceCalc Portal - a specialized tool for Copilot scenario resource estimation. This will be a quick demo showcasing the key features and live functionality.",
+            
+            "Let me start with the problem we're solving. Traditional Copilot scenario resource planning involves complex manual calculations in spreadsheets, with no way to persist or share work. Our solution automates these calculations with smart data management.",
+            
+            "Here are the key features: Smart calculations for 4 different Copilot scenario types, automatic browser-based persistence, and export/import functionality for sharing. Everything is designed for efficiency and ease of use.",
+            
+            "Now for the live demo. I'll show you the actual portal: entering parameters for different Copilot scenarios, viewing real-time resource estimates, exporting data, and importing it back. We'll also see how it switches between different calculation scenarios seamlessly.",
+            
+            "Thank you for your attention! The portal is live and ready for questions. I'm happy to demonstrate any specific features or discuss the technical implementation."
+        ];
+
+        // Initialize
+        document.getElementById('totalSlides').textContent = totalSlides;
+        updateSlide();
+
+        function nextSlide() {
+            if (currentSlideIndex < totalSlides - 1) {
+                currentSlideIndex++;
+                updateSlide();
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                updateSlide();
+            }
+        }
+
+        function updateSlide() {
+            // Hide all slides
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // Show current slide
+            slides[currentSlideIndex].classList.add('active');
+            
+            // Update counter and notes
+            document.getElementById('currentSlide').textContent = currentSlideIndex + 1;
+            document.getElementById('currentNotes').textContent = speakerNotes[currentSlideIndex];
+        }
+
+        function toggleNotes() {
+            const notes = document.getElementById('speakerNotes');
+            notes.classList.toggle('visible');
+        }
+
+        function toggleFullscreen() {
+            const container = document.querySelector('.presentation-container');
+            
+            if (!document.fullscreenElement) {
+                // Enter fullscreen
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                } else if (container.mozRequestFullScreen) {
+                    container.mozRequestFullScreen();
+                }
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                }
+            }
+        }
+
+        // Update fullscreen button text
+        function updateFullscreenButton() {
+            const btn = document.querySelector('.fullscreen-btn');
+            if (document.fullscreenElement) {
+                btn.innerHTML = '🔲 Exit Fullscreen';
+                btn.title = 'Exit Fullscreen';
+            } else {
+                btn.innerHTML = '🔳 Fullscreen';
+                btn.title = 'Enter Fullscreen';
+            }
+        }
+
+        // Listen for fullscreen changes
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+        document.addEventListener('MSFullscreenChange', updateFullscreenButton);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            // Prevent default for navigation keys
+            if (['ArrowRight', 'ArrowLeft', ' ', 'Home', 'End', 'F11'].includes(e.key)) {
+                e.preventDefault();
+            }
+            
+            switch(e.key) {
+                case 'ArrowRight':
+                case ' ':
+                    nextSlide();
+                    break;
+                case 'ArrowLeft':
+                    previousSlide();
+                    break;
+                case 'n':
+                case 'N':
+                    toggleNotes();
+                    break;
+                case 'f':
+                case 'F':
+                case 'F11':
+                    toggleFullscreen();
+                    break;
+                case 'Home':
+                    currentSlideIndex = 0;
+                    updateSlide();
+                    break;
+                case 'End':
+                    currentSlideIndex = totalSlides - 1;
+                    updateSlide();
+                    break;
+                case 'Escape':
+                    // Exit fullscreen with Escape
+                    if (document.fullscreenElement) {
+                        toggleFullscreen();
+                    }
+                    break;
+            }
+        });
+
+        // Mouse/touch navigation
+        let startX = 0;
+        let startY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!startX || !startY) return;
+            
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            
+            const diffX = startX - endX;
+            const diffY = startY - endY;
+            
+            // Only trigger if horizontal swipe is dominant
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0) {
+                    nextSlide(); // Swipe left = next slide
+                } else {
+                    previousSlide(); // Swipe right = previous slide
+                }
+            }
+            
+            startX = 0;
+            startY = 0;
+        });
+
+        // Click navigation (left/right sides of screen)
+        document.addEventListener('click', (e) => {
+            const screenWidth = window.innerWidth;
+            const clickX = e.clientX;
+            
+            // Don't trigger if clicking on controls or speaker notes
+            if (e.target.closest('.controls') || e.target.closest('.speaker-notes')) {
+                return;
+            }
+            
+            if (clickX < screenWidth * 0.3) {
+                previousSlide(); // Left third of screen
+            } else if (clickX > screenWidth * 0.7) {
+                nextSlide(); // Right third of screen
+            }
+        });
+
+        // Auto-advance for demo (optional - remove if you want manual control)
+        let autoAdvance = false;
+        
+        function startAutoDemo() {
+            autoAdvance = true;
+            const interval = setInterval(() => {
+                if (autoAdvance && currentSlideIndex < totalSlides - 1) {
+                    nextSlide();
+                } else {
+                    clearInterval(interval);
+                    autoAdvance = false;
+                }
+            }, 25000); // 25 seconds per slide for 3-minute total
+        }
+
+        // Uncomment next line to enable auto-advance
+        // setTimeout(startAutoDemo, 2000);
+    </script>
+</body>
+</html>
